@@ -14,7 +14,7 @@ const VARIANTS: Record<ButtonVariant, string> = {
   accent: "bg-accent text-accent-ink hover:bg-accent-strong",
   outline:
     "border border-line bg-surface text-ink hover:border-accent-strong hover:bg-accent hover:text-accent-ink",
-  ghost: "text-muted hover:bg-accent-soft hover:text-accent-ink",
+  ghost: "text-muted hover:bg-danger-soft hover:text-danger-ink",
   danger: "bg-danger-soft text-danger-ink hover:bg-danger/15",
   dangerSolid: "bg-danger text-white hover:bg-danger/90",
 };

@@ -70,13 +70,15 @@ export default async function DashboardPage() {
             className="panel group p-5 transition-colors hover:border-ink/15"
           >
             <div className="flex items-center justify-between">
-              <span className="grid h-10 w-10 place-items-center rounded-xl bg-accent-soft text-accent-ink transition-all duration-200 group-hover:scale-110 group-hover:rounded-full group-hover:bg-accent">
+              <span className="grid h-10 w-10 place-items-center rounded-xl bg-accent-soft text-accent-ink">
                 <Icon size={18} strokeWidth={2.2} />
               </span>
-              <ArrowUpRight
-                size={18}
-                className="text-faint transition-all duration-200 group-hover:-translate-y-1 group-hover:translate-x-1 group-hover:text-ink"
-              />
+              <span className="grid size-9 place-items-center rounded-full text-faint transition-all duration-200 group-hover:bg-accent group-hover:text-ink">
+                <ArrowUpRight
+                  size={18}
+                  className="transition-transform duration-200 group-hover:rotate-12"
+                />
+              </span>
             </div>
             <p className="mt-4 font-display text-[32px] font-semibold leading-none tabular-nums text-ink">
               {value}
