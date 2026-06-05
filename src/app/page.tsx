@@ -27,8 +27,6 @@ import type { MacchinaRef } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
-const STAT_TONE = "text-accent-ink bg-accent-soft";
-
 export default async function DashboardPage() {
   if (!isSupabaseConfigured()) return <SetupNeeded />;
 
@@ -72,12 +70,12 @@ export default async function DashboardPage() {
             className="panel group p-5 transition-colors hover:border-ink/15"
           >
             <div className="flex items-center justify-between">
-              <span className={`grid h-10 w-10 place-items-center rounded-xl ${STAT_TONE}`}>
+              <span className="grid h-10 w-10 place-items-center rounded-xl bg-accent-soft text-accent-ink transition-all duration-200 group-hover:scale-110 group-hover:rounded-full group-hover:bg-accent">
                 <Icon size={18} strokeWidth={2.2} />
               </span>
               <ArrowUpRight
                 size={18}
-                className="text-faint transition-colors group-hover:text-ink"
+                className="text-faint transition-all duration-200 group-hover:-translate-y-1 group-hover:translate-x-1 group-hover:text-ink"
               />
             </div>
             <p className="mt-4 font-display text-[32px] font-semibold leading-none tabular-nums text-ink">
