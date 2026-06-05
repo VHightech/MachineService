@@ -47,7 +47,7 @@ export default async function DashboardPage() {
 
   const stats = [
     { label: "Macchine", value: data.totali.macchine, icon: Factory, href: "/macchine" },
-    { label: "Pezzi a catalogo", value: data.totali.pezzi, icon: Boxes, href: "/magazzino" },
+    { label: "Pezzi in magazzino", value: data.totali.pezzi, icon: Boxes, href: "/magazzino" },
     { label: "Manutenzioni", value: data.totali.manutenzioni, icon: Wrench, href: "/manutenzioni" },
   ];
 
@@ -58,9 +58,6 @@ export default async function DashboardPage() {
       {/* Azioni rapide + statistiche */}
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <Card className="col-span-2 flex flex-col p-3 lg:col-span-1">
-          <p className="px-1 pb-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-faint">
-            Aggiungi
-          </p>
           <div className="grid flex-1 grid-cols-3 gap-2">
             <ManutenzioneForm macchine={macchine} pezzi={pezzi} square />
             <PezzoForm macchine={macchine} square />
@@ -193,8 +190,8 @@ export default async function DashboardPage() {
                         <p className="truncate text-[14px] font-medium text-ink">
                           {m.macchina?.nome ?? "Macchina rimossa"}
                         </p>
-                        <span className="inline-flex shrink-0 items-center gap-1 text-[12px] text-faint">
-                          <CalendarDays size={13} />
+                        <span className="inline-flex shrink-0 items-center gap-1.5 text-[14px] font-semibold text-ink">
+                          <CalendarDays size={15} className="text-muted" />
                           {formatDataIt(m.data)}
                         </span>
                       </div>

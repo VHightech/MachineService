@@ -41,7 +41,7 @@ export default async function MagazzinoPage() {
         title="Magazzino"
         description={
           pezzi.length > 0
-            ? `${pezzi.length} pezzi a catalogo${esauriti > 0 ? ` · ${esauriti} esauriti` : ""}.`
+            ? `${pezzi.length} pezzi in magazzino${esauriti > 0 ? ` · ${esauriti} esauriti` : ""}.`
             : "Inserisci qui i pezzi di ricambio in tuo possesso."
         }
         actions={
