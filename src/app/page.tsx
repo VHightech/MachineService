@@ -73,10 +73,10 @@ export default async function DashboardPage() {
               <span className="grid h-10 w-10 place-items-center rounded-xl bg-accent-soft text-accent-ink">
                 <Icon size={18} strokeWidth={2.2} />
               </span>
-              <span className="grid size-9 place-items-center rounded-full text-faint transition-all duration-200 group-hover:bg-accent group-hover:text-ink">
+              <span className="grid size-9 place-items-center rounded-full text-faint transition-all duration-300 ease-out group-hover:scale-110 group-hover:bg-accent group-hover:text-ink">
                 <ArrowUpRight
                   size={18}
-                  className="transition-transform duration-200 group-hover:rotate-12"
+                  className="transition-transform duration-300 ease-out group-hover:rotate-[20deg]"
                 />
               </span>
             </div>
