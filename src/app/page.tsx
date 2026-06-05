@@ -57,7 +57,7 @@ export default async function DashboardPage() {
 
       {/* Azioni rapide + statistiche */}
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <Card className="col-span-2 flex flex-col p-1.5 lg:col-span-1">
+        <Card className="col-span-2 flex flex-col p-1.5 md:p-1.5 lg:col-span-1">
           <div className="grid flex-1 grid-cols-3 gap-1.5">
             <ManutenzioneForm macchine={macchine} pezzi={pezzi} square />
             <PezzoForm macchine={macchine} square />
