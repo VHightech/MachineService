@@ -1,10 +1,11 @@
 "use client";
 
 import { useMemo, useState, useTransition } from "react";
-import { Trash2, Search } from "lucide-react";
+import { Trash2, Search, Wrench } from "lucide-react";
 import { Modal } from "@/components/ui/modal";
 import { Button, type ButtonVariant } from "@/components/ui/button";
 import { PlusCircle } from "@/components/ui/plus-circle";
+import { SquareTrigger } from "@/components/ui/square-trigger";
 import { Input, Textarea, Select, FieldRow, Label } from "@/components/ui/field";
 import { createManutenzione } from "@/actions/manutenzioni";
 import { oggiISO, cn } from "@/lib/utils";
@@ -22,6 +23,7 @@ interface ManutenzioneFormProps {
   macchine: MacchinaRef[];
   pezzi: PezzoSelezione[];
   variant?: ButtonVariant;
+  square?: boolean;
 }
 
 interface Riga {
@@ -33,6 +35,7 @@ export function ManutenzioneForm({
   macchine,
   pezzi,
   variant = "primary",
+  square = false,
 }: ManutenzioneFormProps) {
   const [open, setOpen] = useState(false);
   const [macchinaId, setMacchinaId] = useState("");
@@ -127,10 +130,14 @@ export function ManutenzioneForm({
 
   return (
     <>
-      <Button variant={variant} onClick={apri}>
-        <PlusCircle />
-        Nuova manutenzione
-      </Button>
+      {square ? (
+        <SquareTrigger icon={Wrench} label="Manutenzione" onClick={apri} />
+      ) : (
+        <Button variant={variant} onClick={apri}>
+          <PlusCircle />
+          Nuova manutenzione
+        </Button>
+      )}
 
       <Modal
         open={open}

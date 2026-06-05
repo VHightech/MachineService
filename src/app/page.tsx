@@ -3,7 +3,6 @@ import {
   Factory,
   Boxes,
   Wrench,
-  PackageCheck,
   CheckCircle2,
   ArrowUpRight,
   CalendarDays,
@@ -49,28 +48,26 @@ export default async function DashboardPage() {
   const stats = [
     { label: "Macchine", value: data.totali.macchine, icon: Factory, href: "/macchine" },
     { label: "Pezzi a catalogo", value: data.totali.pezzi, icon: Boxes, href: "/magazzino" },
-    { label: "Pezzi in giacenza", value: data.valoreScorte, icon: PackageCheck, href: "/magazzino" },
     { label: "Manutenzioni", value: data.totali.manutenzioni, icon: Wrench, href: "/manutenzioni" },
   ];
 
   return (
     <div className="animate-rise">
-      <PageHeader
-        eyebrow="Panoramica"
-        title="Dashboard"
-        actions={
-          <>
-            {macchine.length > 0 && (
-              <ManutenzioneForm macchine={macchine} pezzi={pezzi} />
-            )}
-            <PezzoForm macchine={macchine} />
-            <MacchinaForm />
-          </>
-        }
-      />
+      <PageHeader eyebrow="Panoramica" title="Dashboard" />
 
-      {/* Statistiche */}
+      {/* Azioni rapide + statistiche */}
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <Card className="col-span-2 flex flex-col p-3 lg:col-span-1">
+          <p className="px-1 pb-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-faint">
+            Aggiungi
+          </p>
+          <div className="grid flex-1 grid-cols-3 gap-2">
+            <ManutenzioneForm macchine={macchine} pezzi={pezzi} square />
+            <PezzoForm macchine={macchine} square />
+            <MacchinaForm square />
+          </div>
+        </Card>
+
         {stats.map(({ label, value, icon: Icon, href }) => (
           <Link
             key={label}

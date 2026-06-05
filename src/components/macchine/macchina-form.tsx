@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Pencil } from "lucide-react";
+import { Pencil, Factory } from "lucide-react";
 import { Modal } from "@/components/ui/modal";
 import { Button, type ButtonVariant } from "@/components/ui/button";
 import { PlusCircle } from "@/components/ui/plus-circle";
+import { SquareTrigger } from "@/components/ui/square-trigger";
 import { Input, Textarea, FieldRow } from "@/components/ui/field";
 import { createMacchina, updateMacchina } from "@/actions/macchine";
 import type { Macchina } from "@/lib/types";
@@ -12,9 +13,14 @@ import type { Macchina } from "@/lib/types";
 interface MacchinaFormProps {
   macchina?: Macchina;
   variant?: ButtonVariant;
+  square?: boolean;
 }
 
-export function MacchinaForm({ macchina, variant = "primary" }: MacchinaFormProps) {
+export function MacchinaForm({
+  macchina,
+  variant = "primary",
+  square = false,
+}: MacchinaFormProps) {
   const isEdit = Boolean(macchina);
   const [open, setOpen] = useState(false);
   const [nome, setNome] = useState(macchina?.nome ?? "");
@@ -51,6 +57,8 @@ export function MacchinaForm({ macchina, variant = "primary" }: MacchinaFormProp
         >
           <Pencil size={16} />
         </button>
+      ) : square ? (
+        <SquareTrigger icon={Factory} label="Macchina" onClick={apri} />
       ) : (
         <Button variant={variant} onClick={apri}>
           <PlusCircle />

@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Pencil } from "lucide-react";
+import { Pencil, Boxes } from "lucide-react";
 import { Modal } from "@/components/ui/modal";
 import { Button, type ButtonVariant } from "@/components/ui/button";
 import { PlusCircle } from "@/components/ui/plus-circle";
+import { SquareTrigger } from "@/components/ui/square-trigger";
 import { Input, FieldRow, Label } from "@/components/ui/field";
 import { createPezzo, updatePezzo, type PezzoInput } from "@/actions/pezzi";
 import { cn } from "@/lib/utils";
@@ -14,9 +15,15 @@ interface PezzoFormProps {
   pezzo?: PezzoConMacchine;
   macchine: MacchinaRef[];
   variant?: ButtonVariant;
+  square?: boolean;
 }
 
-export function PezzoForm({ pezzo, macchine, variant = "primary" }: PezzoFormProps) {
+export function PezzoForm({
+  pezzo,
+  macchine,
+  variant = "primary",
+  square = false,
+}: PezzoFormProps) {
   const isEdit = Boolean(pezzo);
   const [open, setOpen] = useState(false);
   const [codice, setCodice] = useState(pezzo?.codice ?? "");
@@ -77,6 +84,8 @@ export function PezzoForm({ pezzo, macchine, variant = "primary" }: PezzoFormPro
         >
           <Pencil size={16} />
         </button>
+      ) : square ? (
+        <SquareTrigger icon={Boxes} label="Pezzo" onClick={apri} />
       ) : (
         <Button variant={variant} onClick={apri}>
           <PlusCircle />
