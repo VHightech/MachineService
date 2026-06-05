@@ -22,13 +22,14 @@ Next.js (App Router) + Supabase, pensata per l'uso in locale.
 - Apri **Project Settings → API** e copia **Project URL** e **anon public key**.
 
 ### 2. Configura le variabili d'ambiente
-Apri `.env.local` e incolla i valori:
+Apri `.env.local` e incolla i valori (Supabase → Project Settings → API):
 ```
 SUPABASE_URL=https://xxxx.supabase.co
-SUPABASE_ANON_KEY=eyJhbGciOi...
+SUPABASE_SERVICE_ROLE_KEY=eyJ...service_role...
 ```
-> Le chiavi sono usate solo lato server (non finiscono nel browser). I vecchi
-> nomi `NEXT_PUBLIC_SUPABASE_*` restano supportati come fallback.
+> Le chiavi sono usate solo lato server (mai nel browser). Con la RLS attiva
+> (vedi sotto) l'app usa la **service_role**, che bypassa la RLS. I vecchi nomi
+> `NEXT_PUBLIC_SUPABASE_*` / `SUPABASE_ANON_KEY` restano come fallback.
 
 ### 3. Crea le tabelle
 Nel **SQL Editor** di Supabase incolla ed esegui tutto il contenuto di
@@ -47,14 +48,19 @@ Apri http://localhost:3000
 1. Crea un repo Git e importalo su Vercel (oppure usa la CLI / l'integrazione).
 2. In **Project → Settings → Environment Variables** imposta:
    - `SUPABASE_URL`
-   - `SUPABASE_ANON_KEY`
+   - `SUPABASE_SERVICE_ROLE_KEY`
    - `APP_PASSWORD` → la password per entrare nell'app (gate Basic Auth).
 3. Deploy. All'apertura il browser chiederà utente + password: l'utente può
    essere qualsiasi, conta solo la password (`APP_PASSWORD`).
 
-> **Sicurezza**: il gate password protegge l'accesso all'app. La chiave Supabase
-> resta lato server e non viene esposta al browser. Per un livello superiore,
-> attiva la RLS su Supabase e definisci policy adeguate.
+## Sicurezza
+
+- **RLS attiva** su tutte le tabelle, **nessuna policy**: le chiavi anon non
+  accedono ai dati tramite l'API pubblica. Per blindare un DB già creato con la
+  vecchia versione aperta, esegui [`supabase/harden.sql`](supabase/harden.sql).
+- L'app accede al DB **lato server** con la **service_role key** (segreta, mai
+  nel browser), che bypassa la RLS.
+- Il **gate password** (Basic Auth) protegge l'accesso all'interfaccia.
 
 ## Note
 

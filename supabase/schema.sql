@@ -162,17 +162,20 @@ end;
 $$;
 
 -- ------------------------------------------------------------
---  PERMESSI
---  App in localhost senza autenticazione: usiamo la chiave anon
---  con accesso completo. RLS disattivata + grant espliciti.
+--  SICUREZZA (RLS)
+--  La RLS è ATTIVA su tutte le tabelle e NON ci sono policy:
+--  quindi le chiavi anon/authenticated NON possono leggere o
+--  scrivere nulla tramite l'API pubblica.
+--  L'app gira lato server con la SERVICE ROLE KEY, che bypassa
+--  la RLS (chiave segreta, mai esposta al browser).
 -- ------------------------------------------------------------
-alter table public.macchine            disable row level security;
-alter table public.pezzi               disable row level security;
-alter table public.pezzi_macchine      disable row level security;
-alter table public.manutenzioni        disable row level security;
-alter table public.manutenzione_pezzi  disable row level security;
+alter table public.macchine            enable row level security;
+alter table public.pezzi               enable row level security;
+alter table public.pezzi_macchine      enable row level security;
+alter table public.manutenzioni        enable row level security;
+alter table public.manutenzione_pezzi  enable row level security;
 
-grant usage on schema public to anon, authenticated;
-grant all privileges on all tables    in schema public to anon, authenticated;
-grant all privileges on all sequences in schema public to anon, authenticated;
-grant execute on all functions        in schema public to anon, authenticated;
+-- Niente privilegi per anon/authenticated sull'API pubblica.
+revoke all privileges on all tables    in schema public from anon, authenticated;
+revoke all privileges on all sequences in schema public from anon, authenticated;
+revoke execute on all functions        in schema public from anon, authenticated;
