@@ -1,26 +1,130 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ============================================================
+   Officina — Design system
+   Minimalismo caldo: tela osso, card bianche arrotondate,
+   accento lime, nero per le azioni primarie.
+   ============================================================ */
+@theme {
+  --color-canvas: #f2f2ec;
+  --color-surface: #ffffff;
+  --color-surface-2: #faf9f5;
+  --color-ink: #1b1b17;
+  --color-muted: #75746b;
+  --color-faint: #a6a59c;
+  --color-line: #e9e8e0;
+
+  --color-accent: #cbf24d;
+  --color-accent-strong: #bbe636;
+  --color-accent-soft: #eef7cd;
+  --color-accent-ink: #3c4710;
+
+  --color-teal: #1aa088;
+  --color-teal-soft: #d7efe9;
+
+  --color-danger: #df5236;
+  --color-danger-soft: #fbe6e0;
+  --color-danger-ink: #97331c;
+
+  --font-sans: var(--font-hanken), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-bricolage), var(--font-hanken), sans-serif;
+
+  --radius-card: 26px;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+@layer base {
+  * {
+    border-color: var(--color-line);
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    min-height: 100vh;
+    background-color: var(--color-canvas);
+    background-image: radial-gradient(
+      1100px 560px at 100% -8%,
+      #ffffff 0%,
+      var(--color-canvas) 58%
+    );
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background: var(--color-accent);
+    color: var(--color-accent-ink);
+  }
+
+  /* Scrollbar discreta */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-line) transparent;
+  }
+  *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  *::-webkit-scrollbar-thumb {
+    background: var(--color-line);
+    border-radius: 999px;
+    border: 3px solid transparent;
+    background-clip: content-box;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@keyframes overlay-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  .animate-overlay {
+    animation: overlay-in 0.18s ease-out;
+  }
+  .animate-pop {
+    animation: pop-in 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .animate-rise {
+    animation: rise-in 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+  /* Card di base, riusabile anche fuori dal componente Card */
+  .panel {
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+  }
 }

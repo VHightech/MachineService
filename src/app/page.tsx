@@ -1,65 +1,240 @@
-import Image from "next/image";
+import Link from "next/link";
+import {
+  Factory,
+  Boxes,
+  Wrench,
+  PackageCheck,
+  CheckCircle2,
+  ArrowUpRight,
+  CalendarDays,
+} from "lucide-react";
+import { PageHeader } from "@/components/ui/page-header";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { MacchinaForm } from "@/components/macchine/macchina-form";
+import { PezzoForm } from "@/components/magazzino/pezzo-form";
+import { ManutenzioneForm } from "@/components/manutenzioni/manutenzione-form";
+import { SetupNeeded } from "@/components/setup-needed";
+import { DataError } from "@/components/data-error";
+import { isSupabaseConfigured } from "@/lib/supabase/server";
+import {
+  getDashboardData,
+  getMacchineRefs,
+  getPezziPerSelezione,
+  type DashboardData,
+} from "@/lib/queries";
+import { formatDataIt } from "@/lib/utils";
+import type { MacchinaRef } from "@/lib/types";
 
-export default function Home() {
+export const dynamic = "force-dynamic";
+
+const STAT_TONE = "text-accent-ink bg-accent-soft";
+
+export default async function DashboardPage() {
+  if (!isSupabaseConfigured()) return <SetupNeeded />;
+
+  let data: DashboardData;
+  let macchine: MacchinaRef[];
+  let pezzi: Awaited<ReturnType<typeof getPezziPerSelezione>>;
+  try {
+    [data, macchine, pezzi] = await Promise.all([
+      getDashboardData(),
+      getMacchineRefs(),
+      getPezziPerSelezione(),
+    ]);
+  } catch (e) {
+    return <DataError message={e instanceof Error ? e.message : "Errore"} />;
+  }
+
+  const stats = [
+    { label: "Macchine", value: data.totali.macchine, icon: Factory, href: "/macchine" },
+    { label: "Pezzi a catalogo", value: data.totali.pezzi, icon: Boxes, href: "/magazzino" },
+    { label: "Pezzi in giacenza", value: data.valoreScorte, icon: PackageCheck, href: "/magazzino" },
+    { label: "Manutenzioni", value: data.totali.manutenzioni, icon: Wrench, href: "/manutenzioni" },
+  ];
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <div className="animate-rise">
+      <PageHeader
+        eyebrow="Panoramica"
+        title="Dashboard"
+        actions={
+          <>
+            {macchine.length > 0 && (
+              <ManutenzioneForm macchine={macchine} pezzi={pezzi} />
+            )}
+            <PezzoForm macchine={macchine} />
+            <MacchinaForm />
+          </>
+        }
+      />
+
+      {/* Statistiche */}
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        {stats.map(({ label, value, icon: Icon, href }) => (
+          <Link
+            key={label}
+            href={href}
+            className="panel group p-5 transition-colors hover:border-ink/15"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+            <div className="flex items-center justify-between">
+              <span className={`grid h-10 w-10 place-items-center rounded-xl ${STAT_TONE}`}>
+                <Icon size={18} strokeWidth={2.2} />
+              </span>
+              <ArrowUpRight
+                size={18}
+                className="text-faint transition-colors group-hover:text-ink"
+              />
+            </div>
+            <p className="mt-4 font-display text-[32px] font-semibold leading-none tabular-nums text-ink">
+              {value}
+            </p>
+            <p className="mt-1.5 text-[13px] text-muted">{label}</p>
+          </Link>
+        ))}
+      </div>
+
+      {/* Scorte basse + ultime manutenzioni */}
+      <div className="mt-3 grid grid-cols-1 gap-3 lg:grid-cols-2">
+        {/* Scorte basse */}
+        <Card className="p-0">
+          <div className="flex items-center justify-between gap-3 border-b border-line px-5 py-4">
+            <div className="flex items-center gap-2.5">
+              <h2 className="font-display text-[17px] font-semibold tracking-tight">
+                Scorte basse
+              </h2>
+              {data.scorteBasse.length > 0 && (
+                <Badge tone="danger">{data.scorteBasse.length}</Badge>
+              )}
+            </div>
+            <Link
+              href="/magazzino"
+              className="text-[13px] font-medium text-muted hover:text-ink"
+            >
+              Magazzino →
+            </Link>
+          </div>
+
+          {data.scorteBasse.length === 0 ? (
+            <div className="flex flex-col items-center gap-2 px-5 py-12 text-center">
+              <span className="grid h-12 w-12 place-items-center rounded-2xl bg-teal-soft text-teal">
+                <CheckCircle2 size={22} />
+              </span>
+              <p className="text-[14px] font-medium text-ink">Tutto a posto</p>
+              <p className="text-[13px] text-muted">
+                Nessun pezzo sotto la soglia minima.
+              </p>
+            </div>
+          ) : (
+            <ul className="divide-y divide-line">
+              {data.scorteBasse.map((p) => (
+                <li
+                  key={p.id}
+                  className="flex items-center justify-between gap-3 px-5 py-3.5"
+                >
+                  <div className="min-w-0">
+                    <p className="truncate text-[14px] font-medium text-ink">
+                      <span className="font-mono text-[12px] text-muted">
+                        {p.codice}
+                      </span>{" "}
+                      · {p.nome}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2.5">
+                    <span className="text-[13px] text-faint tabular-nums">
+                      min {p.quantita_minima}
+                    </span>
+                    <span className="font-display text-[20px] font-semibold leading-none text-danger-ink tabular-nums">
+                      {p.quantita}
+                    </span>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Card>
+
+        {/* Ultime manutenzioni */}
+        <Card className="p-0">
+          <div className="flex items-center justify-between gap-3 border-b border-line px-5 py-4">
+            <h2 className="font-display text-[17px] font-semibold tracking-tight">
+              Ultime manutenzioni
+            </h2>
+            <Link
+              href="/manutenzioni"
+              className="text-[13px] font-medium text-muted hover:text-ink"
+            >
+              Tutte →
+            </Link>
+          </div>
+
+          {data.ultimeManutenzioni.length === 0 ? (
+            <div className="flex flex-col items-center gap-2 px-5 py-12 text-center">
+              <span className="grid h-12 w-12 place-items-center rounded-2xl bg-surface-2 text-faint">
+                <Wrench size={22} />
+              </span>
+              <p className="text-[14px] font-medium text-ink">
+                Nessun intervento
+              </p>
+              <p className="text-[13px] text-muted">
+                Le manutenzioni registrate appariranno qui.
+              </p>
+            </div>
+          ) : (
+            <ul className="divide-y divide-line">
+              {data.ultimeManutenzioni.map((m) => (
+                <li key={m.id}>
+                  <Link
+                    href={`/manutenzioni#m-${m.id}`}
+                    className="flex items-start gap-3 px-5 py-3.5 transition-colors hover:bg-surface-2"
+                  >
+                    <span className="mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-surface-2 text-ink">
+                      <Wrench size={16} strokeWidth={2.1} />
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-start justify-between gap-3">
+                        <p className="truncate text-[14px] font-medium text-ink">
+                          {m.macchina?.nome ?? "Macchina rimossa"}
+                        </p>
+                        <span className="inline-flex shrink-0 items-center gap-1 text-[12px] text-faint">
+                          <CalendarDays size={13} />
+                          {formatDataIt(m.data)}
+                        </span>
+                      </div>
+                      <p className="line-clamp-1 text-[13px] text-muted">
+                        {m.descrizione}
+                      </p>
+                      {m.pezzi.length > 0 && (
+                        <div className="mt-2 flex flex-wrap gap-1.5">
+                          {m.pezzi.slice(0, 4).map((pp) => (
+                            <span
+                              key={pp.id}
+                              className="inline-flex items-center gap-1.5 rounded-full border border-line bg-surface py-0.5 pl-2 pr-1 text-[11px]"
+                            >
+                              <span className="font-mono text-[10px] text-muted">
+                                {pp.pezzo_codice}
+                              </span>
+                              <span className="text-ink">{pp.pezzo_nome}</span>
+                              <span className="rounded-full bg-accent px-1.5 text-[10px] font-semibold text-accent-ink tabular-nums">
+                                ×{pp.quantita_usata}
+                              </span>
+                            </span>
+                          ))}
+                          {m.pezzi.length > 4 && (
+                            <span className="inline-flex items-center rounded-full bg-surface-2 px-2 py-0.5 text-[11px] font-medium text-muted">
+                              +{m.pezzi.length - 4}
+                            </span>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Card>
+      </div>
     </div>
   );
 }

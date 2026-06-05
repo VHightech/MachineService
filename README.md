@@ -1,36 +1,75 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Officina — Gestionale Manutenzioni
 
-## Getting Started
+Web app minimalista per gestire **manutenzioni**, **magazzino pezzi di ricambio** e **macchine**.
+Next.js (App Router) + Supabase, pensata per l'uso in locale.
 
-First, run the development server:
+## Funzionalità
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **Dashboard** — totali, **scorte basse** in evidenza, ultime manutenzioni.
+- **Manutenzioni** — storico completo degli interventi con i **pezzi utilizzati**; nuova
+  manutenzione con data, descrizione, tecnico e selezione pezzi (filtrati per macchina).
+  La giacenza dei pezzi si **scala in automatico**; eliminando un intervento la giacenza
+  viene **ripristinata**.
+- **Magazzino** — pezzi con **codice alfanumerico**, giacenza, soglia minima, ubicazione e
+  **macchine compatibili** (un pezzo può andare su più macchine). Avviso **scorta bassa**.
+- **Macchine** — anagrafica con il nome (e nota facoltativa).
+- **Esportazione Excel** (.xlsx) di Manutenzioni e Magazzino.
+
+## Setup (5 minuti)
+
+### 1. Crea il progetto Supabase
+- Vai su [supabase.com](https://supabase.com), crea un progetto gratuito.
+- Apri **Project Settings → API** e copia **Project URL** e **anon public key**.
+
+### 2. Configura le variabili d'ambiente
+Apri `.env.local` e incolla i valori:
 ```
+SUPABASE_URL=https://xxxx.supabase.co
+SUPABASE_ANON_KEY=eyJhbGciOi...
+```
+> Le chiavi sono usate solo lato server (non finiscono nel browser). I vecchi
+> nomi `NEXT_PUBLIC_SUPABASE_*` restano supportati come fallback.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 3. Crea le tabelle
+Nel **SQL Editor** di Supabase incolla ed esegui tutto il contenuto di
+[`supabase/schema.sql`](supabase/schema.sql).
+(Facoltativo) esegui anche [`supabase/seed.sql`](supabase/seed.sql) per dei dati di esempio.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 4. Avvia l'app
+```bash
+npm install      # già fatto
+npm run dev
+```
+Apri http://localhost:3000
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Deploy su Vercel
 
-## Learn More
+1. Crea un repo Git e importalo su Vercel (oppure usa la CLI / l'integrazione).
+2. In **Project → Settings → Environment Variables** imposta:
+   - `SUPABASE_URL`
+   - `SUPABASE_ANON_KEY`
+   - `APP_PASSWORD` → la password per entrare nell'app (gate Basic Auth).
+3. Deploy. All'apertura il browser chiederà utente + password: l'utente può
+   essere qualsiasi, conta solo la password (`APP_PASSWORD`).
 
-To learn more about Next.js, take a look at the following resources:
+> **Sicurezza**: il gate password protegge l'accesso all'app. La chiave Supabase
+> resta lato server e non viene esposta al browser. Per un livello superiore,
+> attiva la RLS su Supabase e definisci policy adeguate.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Note
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- In **locale senza `APP_PASSWORD`** l'app non chiede alcuna password.
+- Stack: Next.js 16 · React 19 · Tailwind CSS v4 · Supabase · ExcelJS.
 
-## Deploy on Vercel
+## Struttura
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+src/
+  app/                  pagine (dashboard, manutenzioni, magazzino, macchine) + API export
+  actions/              server actions (create/update/delete)
+  components/           UI riutilizzabile + form per ogni sezione
+  lib/                  client Supabase, query, tipi, utility, export Excel
+supabase/
+  schema.sql            tabelle, trigger giacenza, funzione crea_manutenzione
+  seed.sql              dati di esempio
+```
